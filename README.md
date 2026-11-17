@@ -1,28 +1,40 @@
-# local AI communicator (v1.0)
+# llama-ui (v2)
 
-**local AI communicator** is a lightweight, resource-efficient Windows desktop application designed to replace heavy web-based UIs. Built completely natively using Python and Tkinter, it connects directly to a local `llama-cpp` server to act as both an autonomous automation agent and a seamless local chat companion.
+Local Windows agent for llama.cpp. Writes and runs Python scripts, and summarizes documents.
 
-## Features
+## Setup
+1. `pip install -r requirements.txt`
+2. Edit the paths at the top of `start_server.bat`, pick a model, run it.
+3. `python app.py`
 
-* **Lightweight & Resource-Efficient**: Built with native Python and Tkinter, avoiding heavy browser dependencies like Electron or webviews to operate within strict system resource constraints.
-* **Direct llama-cpp Integration**: Communicates seamlessly with your local `llama-server` backend.
-* **Intelligent Task Router**: Automatically distinguishes between casual chat/long-form writing tasks and technical automation requests.
-* **Multi-Section Prose & Essay Writer**: Bypasses short-token model limitations to generate detailed, multi-thousand-word long-form texts and automatically saves outputs to `.txt` files.
-* **Autonomous Code & Script Execution**: Writes and executes Python snippets, CMD commands, and PowerShell scripts safely within your active workspace folder[cite: 4, 6].
-* **Document Summarization**: Built-in map-reduce text summarization supporting `.pdf`, `.docx`, `.xlsx`, `.csv`, `.md`, and `.txt` files[cite: 4, 7, 10].
-* **Data & File Utilities**: Includes helper tools for cleaning messy spreadsheets (trimming spaces, dropping duplicates) and safe file renaming with preview and undo support[cite: 5, 6].
-* **Polished Desktop UI**: Features a clean split layout with right-aligned user prompts, left-aligned AI responses, markdown text rendering, instant clipboard copy support, and a Light/Dark theme toggle.
+`-c 4096` in start_server.bat must equal `CONTEXT_TOKENS` in config.py.
+If you raise one, raise the other (for example 8192 + 8192). Chunk sizes and history limits scale from it.
 
-## Tech Stack
+## Using it
+| You type | What happens |
+|---|---|
+| `/summarize` | summarizes every supported file in the workspace folder |
+| `/summarize report.pdf` or `/summarize *.pdf` | only those files |
+| attach a file, then `/summarize` | just that file |
+| `/summarize --force` | redo files that already have a summary |
+| `summarize report.pdf` (plain English) | same as the command |
+| anything else | agent mode: model writes a script, it runs, the model sees the output |
 
-* **Language**: Python 3.14+
-* **UI Framework**: Tkinter / ScrolledText
-* **Backend**: Local `llama-cpp` (`llama-server`) via OpenAI-compatible API
-* **Document Parsing**: `pypdf`, `python-docx`, `openpyxl`[cite: 3]
+Summaries are saved as `<filename>.summary.md` beside the original (or in the workspace if the
+file lives elsewhere). Long files are summarized section by section, then combined.
 
-## Quick Setup
+## Safety
+- Scripts that delete, rename/move, run programs, or use absolute paths show a confirmation dialog.
+- Tick "Confirm each script" to be asked every time.
+- Press Stop at any time (the button replaces Send while the agent works).
 
-1. Clone or download this repository into your local workspace.
-2. Install the required Python dependencies:
-   ```bash
-   pip install -r requirements.txt
+## Skills
+Drop `.md` files in `skills/` (front matter: name, description, triggers). A skill is added to the
+prompt only when a trigger word appears in your message. Included: summarize-documents,
+rename-files, csv-excel-cleanup. Their scripts use `helpers.py` (preview/apply/undo renames,
+clean_csv, clean_xlsx, pdf_to_text) so a small model does not have to write that logic itself.
+
+## Files
+config.py (settings) - app.py (window + threads) - ui.py (layout) - agent.py (LLM client, loop,
+summarizer) - tools.py (file reading, chunking, script runner, skills) - helpers.py (safe functions
+for generated scripts) - sessions.json (auto-saved chats, created on first run)
