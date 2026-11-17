@@ -4,7 +4,7 @@ Local Windows agent for llama.cpp. Writes and runs Python scripts, and summarize
 
 ## Setup
 1. `pip install -r requirements.txt`
-2. Edit the paths at the top of `start_server.bat`, pick a model, run it.
+2. Edit the paths at the top of `start_server.bat`, pick a model, run it as local host/server.
 3. open cmd and run: `python app.py`, it connects at local host at `http://127.0.0.1:110`, port: `110` you can change it in cofig.py
 
 `-c 4096` in start_server.bat must equal `CONTEXT_TOKENS` in config.py.
