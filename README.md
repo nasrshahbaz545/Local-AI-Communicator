@@ -1,4 +1,4 @@
-# llama-ui (v2)
+# llama-ui (v)
 
 Local Windows agent for llama.cpp. Writes and runs Python scripts, and summarizes documents.
 
