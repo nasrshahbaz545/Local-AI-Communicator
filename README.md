@@ -1,4 +1,6 @@
-# llama-ui (v)
+# llama-ui (v1)
+
+# Download lates package from 'release' page: https://github.com/nasrshahbaz545/Local-AI-Communicator/releases 
 
 Local Windows agent for llama.cpp. Writes and runs Python scripts, and summarizes documents.
 
